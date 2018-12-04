@@ -75,7 +75,7 @@ public class ObjectUtil {
 	 * @param o
 	 * @return
 	 */
-	private static Object getFieldValueByName(String fieldName, Object o) {
+	public static Object getFieldValueByName(String fieldName, Object o) {
 		try {
 			String firstLetter = fieldName.substring(0, 1).toUpperCase();
 			String getter = "get" + firstLetter + fieldName.substring(1);
