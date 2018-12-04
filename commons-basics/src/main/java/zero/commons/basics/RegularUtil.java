@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * 作者: zhy<br>
  * 时间: 2018年12月4日 下午4:16:42
  */
-public class RegexUtil {
+public class RegularUtil {
 
 	/**
 	 * 
@@ -69,7 +69,12 @@ public class RegexUtil {
 	 */
 	public static boolean isContainZh(String str) {
 		String regex = "[\\u4e00-\\u9fa5]";
-		return match(str, regex);
+		Pattern pattern = Pattern.compile(regex);
+		Matcher isZh = pattern.matcher(str);
+		if (!isZh.find()) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -90,10 +95,6 @@ public class RegexUtil {
 			return false;
 		}
 		return true;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(RegexUtil.isPhone("134299931"));
 	}
 
 }
