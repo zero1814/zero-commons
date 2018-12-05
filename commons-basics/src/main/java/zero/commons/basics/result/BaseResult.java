@@ -12,17 +12,17 @@ public class BaseResult {
 	/**
 	 * 消息编码
 	 */
-	private String code;
+	private ResultType code;
 	/**
 	 * 消息信息
 	 */
 	private String message;
 
-	public String getCode() {
+	public ResultType getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(ResultType code) {
 		this.code = code;
 	}
 
