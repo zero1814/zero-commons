@@ -2,8 +2,6 @@ package zero.commons.basics;
 
 import org.junit.Test;
 
-import com.alibaba.fastjson.JSON;
-
 import zero.commons.basics.vertify.VerificationHelper;
 import zero.commons.basics.vertify.Verify;
 import zero.commons.basics.vertify.VertifyType;
