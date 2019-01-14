@@ -473,4 +473,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return str;
 	}
+
+	/**
+	 * 
+	 * 方法: toChar <br>
+	 * 描述: 字符串转换char数组 <br>
+	 * 作者: zhy<br>
+	 * 时间: 2019年1月9日 下午4:49:16
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static char[] toChar(String str) {
+		return str.toCharArray();
+	}
 }
