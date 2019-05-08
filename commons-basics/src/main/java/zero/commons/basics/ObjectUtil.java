@@ -193,7 +193,7 @@ public class ObjectUtil {
 					if (StringUtils.equals(map.get("type").toString(), "class java.lang.String")) {
 						String name = map.get("name").toString();
 						if (map.get("value") != null && StringUtils.isNotBlank(map.get("value").toString())) {
-							Field field = _obj.getClass().getField(name);
+							Field field = _obj.getClass().getDeclaredField(name);
 							field.set(_obj, map.get("value"));
 						}
 					}
