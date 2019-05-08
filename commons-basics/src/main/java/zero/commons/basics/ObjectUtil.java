@@ -192,7 +192,7 @@ public class ObjectUtil {
 				for (Map<String, Object> map : list) {
 					if (StringUtils.equals(map.get("type").toString(), "class java.lang.String")) {
 						String name = map.get("name").toString();
-						if (StringUtils.isNotBlank(map.get("value").toString())) {
+						if (map.get("value") != null && StringUtils.isNotBlank(map.get("value").toString())) {
 							Field field = _obj.getClass().getField(name);
 							field.set(_obj, map.get("value"));
 						}
