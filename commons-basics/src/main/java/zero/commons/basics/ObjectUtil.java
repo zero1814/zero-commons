@@ -2,6 +2,7 @@ package zero.commons.basics;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,9 @@ public class ObjectUtil {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, Object> infoMap = null;
 		for (int i = 0; i < fields.length; i++) {
+			if (Modifier.isStatic(fields[i].getModifiers())) {
+				continue;
+			}
 			infoMap = new HashMap<String, Object>();
 			infoMap.put("type", fields[i].getType().toString());
 			infoMap.put("name", fields[i].getName());
@@ -82,6 +87,9 @@ public class ObjectUtil {
 			String firstLetter = fieldName.substring(0, 1).toUpperCase();
 			String getter = "get" + firstLetter + fieldName.substring(1);
 			Method method = o.getClass().getMethod(getter, new Class[] {});
+			if (method == null) {
+				return null;
+			}
 			Object value = method.invoke(o, new Object[] {});
 			return value;
 		} catch (Exception e) {
@@ -117,8 +125,10 @@ public class ObjectUtil {
 	 * 作者: zhy<br>
 	 * 时间: 2018年12月7日 下午3:50:04
 	 * 
-	 * @param line       源字符串
-	 * @param smallCamel 大小驼峰,是否为小驼峰(驼峰，第一个字符是大写还是小写)
+	 * @param line
+	 *            源字符串
+	 * @param smallCamel
+	 *            大小驼峰,是否为小驼峰(驼峰，第一个字符是大写还是小写)
 	 * @return 转换后的字符串
 	 */
 	public static String underline2Camel(String line, boolean... smallCamel) {
@@ -154,7 +164,8 @@ public class ObjectUtil {
 	 * 作者: zhy<br>
 	 * 时间: 2018年12月7日 下午3:53:19
 	 * 
-	 * @param line 源字符串
+	 * @param line
+	 *            源字符串
 	 * @return 转换后的字符串
 	 */
 	public static String camel2Underline(String line, boolean... smallCamel) {
@@ -171,5 +182,27 @@ public class ObjectUtil {
 			sb.append(matcher.end() == line.length() ? "" : "_");
 		}
 		return sb.toString();
+	}
+
+	public static Object newObject(Object obj) {
+		try {
+			Object _obj = obj.getClass().newInstance();
+			List<Map<String, Object>> list = ObjectUtil.getFiledsInfo(obj);
+			if (!list.isEmpty()) {
+				for (Map<String, Object> map : list) {
+					if (StringUtils.equals(map.get("type").toString(), "class java.lang.String")) {
+						String name = map.get("name").toString();
+						if (StringUtils.isNotBlank(map.get("value").toString())) {
+							Field field = _obj.getClass().getField(name);
+							field.set(_obj, map.get("value"));
+						}
+					}
+				}
+			}
+			return _obj;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
