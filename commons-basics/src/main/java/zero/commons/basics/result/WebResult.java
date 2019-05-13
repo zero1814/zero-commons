@@ -1,5 +1,7 @@
 package zero.commons.basics.result;
 
+import zero.commons.basics.Page;
+
 public class WebResult {
 
 	private static final Integer SUCCESS = 200;
@@ -103,6 +105,28 @@ public class WebResult {
 		WebResult result = new WebResult();
 		result.setCode(ERROR);
 		result.setMessage(message);
+		return result;
+	}
+
+	/**
+	 * 
+	 * 方法: page <br>
+	 * 描述: 分页查询 <br>
+	 * 作者: zhy<br>
+	 * 时间: 2019年5月13日 上午9:11:07
+	 * 
+	 * @param page
+	 * @return
+	 */
+	public static WebResult page(PageResult<?> page) {
+		WebResult result = new WebResult();
+		if (page.getCode() != ResultType.SUCCESS) {
+			return result(page.getCode(), page.getMessage());
+		}
+		Page _page = new Page();
+		_page.setTotal(page.getTotal());
+		_page.setData(page.getData());
+		result.setObj(_page);
 		return result;
 	}
 
