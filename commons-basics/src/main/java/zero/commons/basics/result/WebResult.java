@@ -9,6 +9,33 @@ public class WebResult {
 	private String message;
 	private Object obj;
 
+	public static WebResult result(ResultType type, String message) {
+		Integer flag = SUCCESS;
+		if (type == ResultType.ERROR) {
+			flag = ERROR;
+		} else if (type == ResultType.NULL) {
+			flag = NONE;
+		}
+		WebResult _result = new WebResult();
+		_result.setCode(flag);
+		_result.setMessage(message);
+		return _result;
+	}
+
+	public static WebResult result(ResultType type, String message, Object obj) {
+		Integer flag = SUCCESS;
+		if (type == ResultType.ERROR) {
+			flag = ERROR;
+		} else if (type == ResultType.NULL) {
+			flag = NONE;
+		}
+		WebResult _result = new WebResult();
+		_result.setCode(flag);
+		_result.setMessage(message);
+		_result.setObj(obj);
+		return _result;
+	}
+
 	/**
 	 * 
 	 * 方法: success <br>
