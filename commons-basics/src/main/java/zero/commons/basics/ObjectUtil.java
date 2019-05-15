@@ -27,6 +27,30 @@ public class ObjectUtil {
 
 	/**
 	 * 
+	 * 方法: isExistsFiled <br>
+	 * 描述: 判断对象是否包含某个属性 <br>
+	 * 作者: zhy<br>
+	 * 时间: 2019年5月14日 下午1:45:43
+	 * 
+	 * @param name
+	 * @param obj
+	 * @return
+	 */
+	public static boolean isExistsFiled(String name, Object obj) {
+		boolean flag = false;
+		try {
+			Field f = obj.getClass().getDeclaredField(name);
+			if (f != null) {
+				flag = true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return flag;
+	}
+
+	/**
+	 * 
 	 * 方法: getFiledsInfo <br>
 	 * 描述: 获取属性类型(type)，属性名(name)，属性值(value)的map组成的list <br>
 	 * 作者: zhy<br>
@@ -98,6 +122,55 @@ public class ObjectUtil {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Object getFieldValueByName(String fieldName, Class clazz) {
+		try {
+			String firstLetter = fieldName.substring(0, 1).toUpperCase();
+			String getter = "get" + firstLetter + fieldName.substring(1);
+			Method method = clazz.getMethod(getter, new Class[] {});
+			if (method == null) {
+				return null;
+			}
+			Object value = method.invoke(clazz.newInstance(), new Object[] {});
+			return value;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * 方法: setFieldValueByName <br>
+	 * 描述: 为属性赋值 <br>
+	 * 作者: zhy<br>
+	 * 时间: 2019年5月14日 下午1:59:59
+	 * 
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param o
+	 */
+	public static void setFieldValueByName(String fieldName, Object fieldValue, Object o) {
+		Field f = null;
+		try {
+			try {
+				f = o.getClass().getDeclaredField(fieldName);
+			} catch (Exception e) {
+				f = o.getClass().getSuperclass().getDeclaredField(fieldName);
+			}
+
+			f.setAccessible(true);
+			String firstLetter = fieldName.substring(0, 1).toUpperCase();
+			String setter = "set" + firstLetter + fieldName.substring(1);
+			Method method = o.getClass().getMethod(setter, fieldValue.getClass());
+			if (method != null) {
+				method.invoke(o, fieldValue);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
 	/**
 	 * 
 	 * 方法: getFiledName <br>
@@ -112,7 +185,6 @@ public class ObjectUtil {
 		Field[] fields = o.getClass().getDeclaredFields();
 		String[] fieldNames = new String[fields.length];
 		for (int i = 0; i < fields.length; i++) {
-			System.out.println(fields[i].getType());
 			fieldNames[i] = fields[i].getName();
 		}
 		return fieldNames;
@@ -205,4 +277,27 @@ public class ObjectUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * 
+	 * 方法: prefix <br>
+	 * 描述: 获取类名称的首字母 <br>
+	 * 作者: zhy<br>
+	 * 时间: 2019年5月14日 上午11:26:00
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static String prefix(Class<?> clazz) {
+		String className = clazz.getSimpleName();
+		char[] chars = className.toCharArray();
+		StringBuffer name = new StringBuffer();
+		for (char c : chars) {
+			if (Character.isUpperCase(c)) {
+				name.append(c);
+			}
+		}
+		return name.toString();
+	}
+
 }

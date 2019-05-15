@@ -3,6 +3,7 @@ package zero.commons.basics.helper;
 import java.util.UUID;
 
 import zero.commons.basics.CodeUtil;
+import zero.commons.basics.ObjectUtil;
 
 /**
  * 
@@ -36,6 +37,12 @@ public class CodeHelper {
 	 * @return
 	 */
 	public static String getCode(String prefix) {
+		String code = prefix + CodeUtil.getInstance().nextId();
+		return code;
+	}
+
+	public static String getCode(Class<?> clazz) {
+		String prefix = ObjectUtil.prefix(clazz);
 		String code = prefix + CodeUtil.getInstance().nextId();
 		return code;
 	}
