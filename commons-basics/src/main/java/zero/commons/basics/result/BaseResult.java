@@ -9,6 +9,14 @@ package zero.commons.basics.result;
  */
 public class BaseResult {
 
+	public BaseResult() {
+	}
+
+	public BaseResult(ResultType code, String message) {
+		this.code = code;
+		this.message = message;
+	}
+
 	/**
 	 * 消息编码
 	 */
@@ -34,4 +42,15 @@ public class BaseResult {
 		this.message = message;
 	}
 
+	public static BaseResult nullResult() {
+		return new BaseResult(ResultType.NULL, "查询为空");
+	}
+
+	public static BaseResult success() {
+		return new BaseResult(ResultType.SUCCESS, "操作成功");
+	}
+
+	public static BaseResult success(String message) {
+		return new BaseResult(ResultType.SUCCESS, message);
+	}
 }

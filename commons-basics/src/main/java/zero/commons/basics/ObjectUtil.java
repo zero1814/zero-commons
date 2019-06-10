@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +109,9 @@ public class ObjectUtil {
 	 */
 	public static Object getFieldValueByName(String fieldName, Object o) {
 		try {
+			if (!isExistsFiled(fieldName, o)) {
+				return null;
+			}
 			String firstLetter = fieldName.substring(0, 1).toUpperCase();
 			String getter = "get" + firstLetter + fieldName.substring(1);
 			Method method = o.getClass().getMethod(getter, new Class[] {});
@@ -300,4 +304,12 @@ public class ObjectUtil {
 		return name.toString();
 	}
 
+	public static List<Field> getFields(Class<?> clazz) {
+		List<Field> list = new ArrayList<Field>();
+		while (clazz != null) {
+			list.addAll(new ArrayList<>(Arrays.asList(clazz.getDeclaredFields())));
+			clazz = clazz.getSuperclass();
+		}
+		return list;
+	}
 }
