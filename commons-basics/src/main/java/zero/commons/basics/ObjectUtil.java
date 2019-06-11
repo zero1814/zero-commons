@@ -40,7 +40,7 @@ public class ObjectUtil {
 	public static boolean isExistsFiled(String name, Object obj) {
 		boolean flag = false;
 		try {
-			Field f = obj.getClass().getDeclaredField(name);
+			Field f = getFieldByName(obj.getClass(), name);
 			if (f != null) {
 				flag = true;
 			}
@@ -61,17 +61,18 @@ public class ObjectUtil {
 	 * @return
 	 */
 	public static List<Map<String, Object>> getFiledsInfo(Object o) {
-		Field[] fields = o.getClass().getDeclaredFields();
+		List<Field> fields = getFields(o.getClass());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, Object> infoMap = null;
-		for (int i = 0; i < fields.length; i++) {
-			if (Modifier.isStatic(fields[i].getModifiers())) {
+		for (int i = 0; i < fields.size(); i++) {
+			Field f = fields.get(i);
+			if (Modifier.isStatic(f.getModifiers())) {
 				continue;
 			}
 			infoMap = new HashMap<String, Object>();
-			infoMap.put("type", fields[i].getType().toString());
-			infoMap.put("name", fields[i].getName());
-			infoMap.put("value", getFieldValueByName(fields[i].getName(), o));
+			infoMap.put("type", f.getType().toString());
+			infoMap.put("name", f.getName());
+			infoMap.put("value", getFieldValueByName(f.getName(), o));
 			list.add(infoMap);
 		}
 		return list;
@@ -157,12 +158,7 @@ public class ObjectUtil {
 	public static void setFieldValueByName(String fieldName, Object fieldValue, Object o) {
 		Field f = null;
 		try {
-			try {
-				f = o.getClass().getDeclaredField(fieldName);
-			} catch (Exception e) {
-				f = o.getClass().getSuperclass().getDeclaredField(fieldName);
-			}
-
+			f = getFieldByName(o.getClass(), fieldName);
 			f.setAccessible(true);
 			String firstLetter = fieldName.substring(0, 1).toUpperCase();
 			String setter = "set" + firstLetter + fieldName.substring(1);
@@ -186,10 +182,10 @@ public class ObjectUtil {
 	 * @return
 	 */
 	private static String[] getFiledName(Object o) {
-		Field[] fields = o.getClass().getDeclaredFields();
-		String[] fieldNames = new String[fields.length];
-		for (int i = 0; i < fields.length; i++) {
-			fieldNames[i] = fields[i].getName();
+		List<Field> fields = getFields(o.getClass());
+		String[] fieldNames = new String[fields.size()];
+		for (int i = 0; i < fields.size(); i++) {
+			fieldNames[i] = fields.get(i).getName();
 		}
 		return fieldNames;
 	}
@@ -266,12 +262,10 @@ public class ObjectUtil {
 			List<Map<String, Object>> list = ObjectUtil.getFiledsInfo(obj);
 			if (!list.isEmpty()) {
 				for (Map<String, Object> map : list) {
-					if (StringUtils.equals(map.get("type").toString(), "class java.lang.String")) {
-						String name = map.get("name").toString();
-						if (map.get("value") != null && StringUtils.isNotBlank(map.get("value").toString())) {
-							Field field = _obj.getClass().getDeclaredField(name);
-							field.set(_obj, map.get("value"));
-						}
+					String name = map.get("name").toString();
+					if (map.get("value") != null && StringUtils.isNotBlank(map.get("value").toString())) {
+						Field field = _obj.getClass().getDeclaredField(name);
+						field.set(_obj, map.get("value"));
 					}
 				}
 			}
@@ -311,5 +305,18 @@ public class ObjectUtil {
 			clazz = clazz.getSuperclass();
 		}
 		return list;
+	}
+
+	public static Field getFieldByName(Class<?> clazz, String fieldName) {
+		while (clazz != null) {
+			List<Field> list = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+			for (Field field : list) {
+				if (StringUtils.equals(field.getName(), fieldName)) {
+					return field;
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}
+		return null;
 	}
 }
