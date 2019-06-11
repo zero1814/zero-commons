@@ -264,7 +264,8 @@ public class ObjectUtil {
 				for (Map<String, Object> map : list) {
 					String name = map.get("name").toString();
 					if (map.get("value") != null && StringUtils.isNotBlank(map.get("value").toString())) {
-						Field field = _obj.getClass().getDeclaredField(name);
+						Field field = getFieldByName(_obj.getClass(), name);
+						field.setAccessible(true);
 						field.set(_obj, map.get("value"));
 					}
 				}
