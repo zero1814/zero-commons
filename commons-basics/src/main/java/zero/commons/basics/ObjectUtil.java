@@ -127,23 +127,6 @@ public class ObjectUtil {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Object getFieldValueByName(String fieldName, Class clazz) {
-		try {
-			String firstLetter = fieldName.substring(0, 1).toUpperCase();
-			String getter = "get" + firstLetter + fieldName.substring(1);
-			Method method = clazz.getMethod(getter, new Class[] {});
-			if (method == null) {
-				return null;
-			}
-			Object value = method.invoke(clazz.newInstance(), new Object[] {});
-			return value;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-	}
-
 	/**
 	 * 
 	 * 方法: setFieldValueByName <br>
@@ -306,6 +289,25 @@ public class ObjectUtil {
 			clazz = clazz.getSuperclass();
 		}
 		return list;
+	}
+
+	public static List<Map<String, Object>> getFieldsNotNull(Object obj) {
+		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+		List<Field> list = getFields(obj.getClass());
+		for (Field field : list) {
+			if (StringUtils.equalsAny(field.getName(), "serialVersionUID")) {
+				continue;
+			}
+			String name = field.getName();
+			Object value = getFieldValueByName(name, obj);
+			if (value != null) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("name", name);
+				map.put("value", value);
+				data.add(map);
+			}
+		}
+		return data;
 	}
 
 	public static Field getFieldByName(Class<?> clazz, String fieldName) {
