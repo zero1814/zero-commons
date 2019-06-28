@@ -48,6 +48,15 @@ public class WebResult {
 		return result;
 	}
 
+	public static WebResult obj(RootResult root) {
+		WebResult result = new WebResult();
+		Integer code = changeCode(root.getCode());
+		result.setCode(code);
+		result.setMessage(root.getMessage());
+		result.setObj(root.getObj());
+		return result;
+	}
+
 	/**
 	 * 
 	 * 方法: data <br>
