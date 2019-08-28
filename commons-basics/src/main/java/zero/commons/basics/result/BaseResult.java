@@ -53,4 +53,10 @@ public class BaseResult {
 	public static BaseResult success(String message) {
 		return new BaseResult(ResultType.SUCCESS, message);
 	}
+	public static BaseResult error() {
+		return new BaseResult(ResultType.ERROR, "操作失败");
+	}	
+	public static BaseResult error(String message) {
+		return new BaseResult(ResultType.ERROR, message);
+	}
 }

@@ -35,5 +35,4 @@ public class DataResult<T> extends BaseResult {
 	public void setData(List<T> data) {
 		this.data = data;
 	}
-
 }
